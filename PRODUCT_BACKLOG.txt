@@ -7,5 +7,5 @@ PB05 - executar os teste existentes
 [x]servidor
 [x]GET /
 [X]POST /chamados
-[ ]validação
-[ ]teste
+[x]validação
+[x]teste
