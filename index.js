@@ -1,14 +1,17 @@
-const express = require('express');
-const app = express();
+// Permite execução direta via "node index.js" utilizando ts-node ou o build compilado
+try {
+  require('ts-node/register');
+  const { app } = require('./src/app');
+  module.exports = app;
 
-app.get('/', function (req, res) {
-    res.send('Chegou na rota raiz')
-})
+  if (require.main === module) {
+    require('./src/server');
+  }
+} catch (err) {
+  const { app } = require('./dist/app');
+  module.exports = app;
 
-app.post('/chamados', function (req, res) {
-    res.send('Chegou na rota raiz')
-})
-
-app.listen(3000, function () {
-    console.log('O servidor está rodando na porta 3000')
-})
+  if (require.main === module) {
+    require('./dist/server');
+  }
+}
