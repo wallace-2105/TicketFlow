@@ -4,595 +4,145 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Service Desk - Painel de Chamados</title>
+  <meta name="description" content="Painel interativo de gerenciamento e validação de chamados da API Service Desk.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #0b0f19;
-      --surface: #131b2e;
-      --surface-border: #1e293b;
-      --surface-hover: #1e2942;
-      --primary: #3b82f6;
-      --primary-glow: rgba(59, 130, 246, 0.25);
-      --success: #10b981;
-      --success-glow: rgba(16, 185, 129, 0.2);
-      --danger: #ef4444;
-      --danger-glow: rgba(239, 68, 68, 0.2);
-      --text: #f1f5f9;
-      --text-muted: #94a3b8;
-      --radius: 12px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      padding: 2rem 1.5rem;
-      display: flex;
-      justify-content: center;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 1000px;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-
-    /* Header */
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-      padding-bottom: 1.5rem;
-      border-bottom: 1px solid var(--surface-border);
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .brand-icon {
-      width: 44px;
-      height: 44px;
-      background: linear-gradient(135deg, #2563eb, #38bdf8);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      box-shadow: 0 4px 15px var(--primary-glow);
-    }
-
-    .brand h1 {
-      font-size: 1.4rem;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-    }
-
-    .brand p {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.4rem 0.85rem;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      color: var(--success);
-      font-size: 0.85rem;
-      font-weight: 600;
-      border-radius: 9999px;
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      background-color: var(--success);
-      border-radius: 50%;
-      box-shadow: 0 0 10px var(--success);
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-
-    /* Grid Layout */
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1.2fr;
-      gap: 2rem;
-    }
-
-    @media (max-width: 840px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* Cards */
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--surface-border);
-      border-radius: var(--radius);
-      padding: 1.75rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-    }
-
-    .card-title {
-      font-size: 1.15rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    /* Form */
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    label {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: var(--text-muted);
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .char-counter {
-      font-size: 0.75rem;
-      transition: color 0.2s;
-    }
-
-    .char-counter.valid {
-      color: var(--success);
-    }
-
-    .char-counter.invalid {
-      color: var(--danger);
-    }
-
-    input, textarea {
-      width: 100%;
-      background: #0f1629;
-      border: 1px solid var(--surface-border);
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      color: var(--text);
-      font-size: 0.95rem;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    input:focus, textarea:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px var(--primary-glow);
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-
-    .quick-tests {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .btn-outline {
-      background: transparent;
-      border: 1px solid var(--surface-border);
-      color: var(--text-muted);
-      font-size: 0.75rem;
-      padding: 0.35rem 0.7rem;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .btn-outline:hover {
-      border-color: var(--primary);
-      color: var(--text);
-      background: rgba(59, 130, 246, 0.1);
-    }
-
-    .btn-submit {
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 0.85rem 1.25rem;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.1s, box-shadow 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    .btn-submit:hover {
-      box-shadow: 0 4px 15px var(--primary-glow);
-      transform: translateY(-1px);
-    }
-
-    .btn-submit:active {
-      transform: translateY(0);
-    }
-
-    /* Response Notification */
-    .response-box {
-      padding: 1rem;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      display: none;
-      animation: fadeIn 0.3s ease-out;
-    }
-
-    .response-box.success {
-      display: block;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.4);
-      color: #6ee7b7;
-    }
-
-    .response-box.error {
-      display: block;
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.4);
-      color: #fca5a5;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-5px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Ticket List */
-    .tickets-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .ticket-count {
-      font-size: 0.85rem;
-      background: #1e293b;
-      padding: 0.2rem 0.6rem;
-      border-radius: 9999px;
-      color: var(--text-muted);
-    }
-
-    .tickets-container {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      max-height: 520px;
-      overflow-y: auto;
-      padding-right: 0.25rem;
-    }
-
-    .ticket-card {
-      background: #0f1629;
-      border: 1px solid var(--surface-border);
-      border-radius: 8px;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-      transition: transform 0.15s, border-color 0.15s;
-    }
-
-    .ticket-card:hover {
-      transform: translateX(3px);
-      border-color: #334155;
-    }
-
-    .ticket-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .ticket-id {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: #38bdf8;
-      background: rgba(56, 189, 248, 0.1);
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-    }
-
-    .ticket-date {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .ticket-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .ticket-desc {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      line-height: 1.4;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: var(--text-muted);
-    }
-
-    .empty-state-icon {
-      font-size: 2.5rem;
-      margin-bottom: 0.75rem;
-      opacity: 0.4;
-    }
-
-    /* Endpoints Links */
-    .links-bar {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    .links-bar a {
-      color: var(--primary);
-      text-decoration: none;
-    }
-
-    .links-bar a:hover {
-      text-decoration: underline;
-    }
-  </style>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/app.js" defer></script>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div class="brand">
-        <div class="brand-icon">🎫</div>
-        <div>
+  <div class="app-wrapper">
+    <!-- Header Principal -->
+    <header class="app-header">
+      <div class="brand-section">
+        <div class="brand-badge-icon" aria-hidden="true">🎫</div>
+        <div class="brand-titles">
           <h1>Service Desk API</h1>
-          <p>Painel de Controle e Testes em Tempo Real</p>
+          <p>Painel de Controle e Validações em Tempo Real</p>
         </div>
       </div>
-      <div class="status-badge">
-        <span class="status-dot"></span>
-        API Online :3000
+      <div class="server-pill" title="Servidor Express respondendo localmente">
+        <span class="server-dot"></span>
+        <span>API Online :3000</span>
       </div>
     </header>
 
-    <div class="grid">
-      <!-- Formulário de Criação -->
-      <section class="card">
-        <div class="card-title">
-          <span>Abrir Novo Chamado</span>
+    <!-- Barra de Métricas / Estatísticas -->
+    <section class="stats-ribbon" aria-label="Estatísticas do Sistema">
+      <div class="stat-card">
+        <div class="stat-icon" aria-hidden="true">📊</div>
+        <div class="stat-info">
+          <div id="statTotal" class="stat-value">0</div>
+          <div class="stat-label">Total de Chamados</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" aria-hidden="true">⏱️</div>
+        <div class="stat-info">
+          <div id="statRecent" class="stat-value">-</div>
+          <div class="stat-label">Último Chamado ID</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" aria-hidden="true">🛡️</div>
+        <div class="stat-info">
+          <div class="stat-value" style="color: var(--success); font-size: 1.15rem;">Ativo</div>
+          <div class="stat-label">Validador TypeScript</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Grid Principal: Formulário e Feed -->
+    <main class="dashboard-grid">
+      <!-- Coluna Esquerda: Abertura de Chamados -->
+      <section class="panel-card" aria-labelledby="formTitle">
+        <div class="panel-header">
+          <h2 id="formTitle">Abrir Novo Chamado</h2>
         </div>
 
-        <form id="formChamado">
-          <div class="form-group">
-            <label for="inputTitulo">
-              <span>Título do Chamado *</span>
-              <span id="charCounter" class="char-counter invalid">0/100 (mínimo 5)</span>
-            </label>
+        <form id="ticketForm" novalidate>
+          <div class="form-field">
+            <div class="field-top-label">
+              <label for="inputTitulo">Título do Chamado *</label>
+              <span id="fieldStatus" class="field-status invalid">Mínimo 5 caracteres</span>
+            </div>
             <input 
               type="text" 
               id="inputTitulo" 
-              placeholder="Ex: Falha ao carregar dashboard" 
+              class="input-text" 
+              placeholder="Ex: Falha na autenticação SSO" 
+              autocomplete="off" 
               required
-              autocomplete="off"
             />
+            <div class="validation-progress-track" title="Progresso da validação de caracteres (5 a 100)">
+              <div id="progressBar" class="validation-progress-bar"></div>
+            </div>
           </div>
 
-          <div class="form-group" style="margin-top: 1rem;">
-            <label for="inputDescricao">Descrição (opcional)</label>
+          <div class="form-field" style="margin-top: 1rem;">
+            <div class="field-top-label">
+              <label for="inputDescricao">Descrição detalhada (opcional)</label>
+            </div>
             <textarea 
               id="inputDescricao" 
-              placeholder="Descreva o ocorrido ou passos para reproduzir..."
+              class="textarea-text" 
+              placeholder="Descreva o problema ou passos para reprodução..."
             ></textarea>
           </div>
 
-          <div style="margin-top: 1rem;">
-            <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.4rem;">
-              Testes rápidos de validação:
-            </span>
-            <div class="quick-tests">
-              <button type="button" class="btn-outline" id="btnTestValid">Exemplo Válido</button>
-              <button type="button" class="btn-outline" id="btnTestShort">Inválido (&lt; 5 chars)</button>
-              <button type="button" class="btn-outline" id="btnTestLong">Inválido (&gt; 100 chars)</button>
+          <div class="quick-tests-container" style="margin-top: 1.15rem;">
+            <span class="quick-tests-label">Simular testes de validação:</span>
+            <div class="quick-tests-buttons">
+              <button type="button" id="btnExemploValido" class="chip-btn">Exemplo Válido</button>
+              <button type="button" id="btnExemploCurto" class="chip-btn">Muito Curto (&lt; 5)</button>
+              <button type="button" id="btnExemploLongo" class="chip-btn">Muito Longo (&gt; 100)</button>
             </div>
           </div>
 
-          <button type="submit" class="btn-submit" style="margin-top: 1.5rem; width: 100%;">
-            <span>Enviar Chamado (POST /chamados)</span>
-          </button>
+          <div style="margin-top: 1.5rem;">
+            <button type="submit" id="submitBtn" class="btn-primary-action" style="width: 100%;">
+              <span>Enviar Chamado (POST /chamados)</span>
+            </button>
+            <span class="keyboard-hint">Pressione <kbd>Ctrl</kbd> + <kbd>Enter</kbd> para enviar rapidamente</span>
+          </div>
         </form>
-
-        <div id="responseBox" class="response-box"></div>
       </section>
 
-      <!-- Lista de Chamados -->
-      <section class="card">
-        <div class="card-title">
-          <div class="tickets-header" style="width: 100%;">
-            <span>Chamados Registrados</span>
-            <span id="ticketCount" class="ticket-count">0 chamados</span>
+      <!-- Coluna Direita: Feed de Chamados e Pesquisa -->
+      <section class="panel-card" aria-labelledby="feedTitle">
+        <div class="panel-header">
+          <h2 id="feedTitle">Fila de Atendimento</h2>
+        </div>
+
+        <div class="feed-controls">
+          <div class="search-box-wrapper">
+            <span class="search-icon" aria-hidden="true">🔍</span>
+            <input 
+              type="search" 
+              id="searchInput" 
+              class="search-input" 
+              placeholder="Pesquisar por título, ID ou conteúdo..." 
+              autocomplete="off"
+            />
+            <button type="button" id="clearSearchBtn" class="clear-search-btn" title="Limpar pesquisa">✕</button>
           </div>
         </div>
 
-        <div id="ticketsContainer" class="tickets-container">
-          <div class="empty-state">
-            <div class="empty-state-icon">📋</div>
-            <p>Nenhum chamado registrado ainda.</p>
-            <p style="font-size: 0.8rem; margin-top: 0.25rem;">Use o formulário ao lado para criar o primeiro chamado.</p>
-          </div>
-        </div>
+        <div id="ticketsFeed" class="tickets-feed" aria-live="polite"></div>
       </section>
-    </div>
+    </main>
 
-    <div class="links-bar">
-      <span>Rotas diretas da API:</span>
-      <a href="/" target="_blank">GET / (Rota raiz)</a>
+    <!-- Links de Rodapé -->
+    <footer class="app-footer">
+      <span>Endpoints diretos:</span>
+      <a href="/" target="_blank">GET / (Raiz)</a>
       <span>•</span>
-      <a href="/chamados" target="_blank">GET /chamados (JSON puro)</a>
-    </div>
+      <a href="/chamados" target="_blank">GET /chamados (JSON)</a>
+    </footer>
   </div>
 
-  <script>
-    const form = document.getElementById('formChamado');
-    const inputTitulo = document.getElementById('inputTitulo');
-    const inputDescricao = document.getElementById('inputDescricao');
-    const charCounter = document.getElementById('charCounter');
-    const responseBox = document.getElementById('responseBox');
-    const ticketsContainer = document.getElementById('ticketsContainer');
-    const ticketCount = document.getElementById('ticketCount');
-
-    // Validação em tempo real do contador de caracteres
-    inputTitulo.addEventListener('input', () => {
-      const len = inputTitulo.value.trim().length;
-      if (len >= 5 && len <= 100) {
-        charCounter.textContent = `${len}/100 (Válido ✓)`;
-        charCounter.className = 'char-counter valid';
-      } else if (len < 5) {
-        charCounter.textContent = `${len}/100 (Mínimo 5)`;
-        charCounter.className = 'char-counter invalid';
-      } else {
-        charCounter.textContent = `${len}/100 (Máximo 100 excedido)`;
-        charCounter.className = 'char-counter invalid';
-      }
-    });
-
-    // Botões de teste rápido
-    document.getElementById('btnTestValid').addEventListener('click', () => {
-      inputTitulo.value = 'Falha no login com autenticação de dois fatores';
-      inputDescricao.value = 'O código de verificação recebido via e-mail não é aceito.';
-      inputTitulo.dispatchEvent(new Event('input'));
-    });
-
-    document.getElementById('btnTestShort').addEventListener('click', () => {
-      inputTitulo.value = 'Bug';
-      inputDescricao.value = 'Exemplo de título com menos de 5 caracteres que deve ser rejeitado.';
-      inputTitulo.dispatchEvent(new Event('input'));
-    });
-
-    document.getElementById('btnTestLong').addEventListener('click', () => {
-      inputTitulo.value = 'A'.repeat(105);
-      inputDescricao.value = 'Exemplo de título com mais de 100 caracteres que deve ser rejeitado.';
-      inputTitulo.dispatchEvent(new Event('input'));
-    });
-
-    // Carregar lista de chamados
-    async function carregarChamados() {
-      try {
-        const res = await fetch('/chamados');
-        const dados = await res.json();
-
-        ticketCount.textContent = `${dados.length} ${dados.length === 1 ? 'chamado' : 'chamados'}`;
-
-        if (dados.length === 0) {
-          ticketsContainer.innerHTML = `
-            <div class="empty-state">
-              <div class="empty-state-icon">📋</div>
-              <p>Nenhum chamado registrado ainda.</p>
-              <p style="font-size: 0.8rem; margin-top: 0.25rem;">Use o formulário ao lado para criar o primeiro chamado.</p>
-            </div>
-          `;
-          return;
-        }
-
-        ticketsContainer.innerHTML = dados.map(item => `
-          <div class="ticket-card">
-            <div class="ticket-top">
-              <span class="ticket-id">#${item.id}</span>
-              <span class="ticket-date">${new Date(item.dataCriacao).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
-            </div>
-            <div class="ticket-title">${escapeHtml(item.titulo)}</div>
-            ${item.descricao ? `<div class="ticket-desc">${escapeHtml(item.descricao)}</div>` : ''}
-          </div>
-        `).reverse().join('');
-      } catch (err) {
-        console.error('Erro ao buscar chamados:', err);
-      }
-    }
-
-    // Submissão do formulário
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const titulo = inputTitulo.value;
-      const descricao = inputDescricao.value;
-
-      try {
-        const res = await fetch('/chamados', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ titulo, descricao })
-        });
-
-        const data = await res.json();
-
-        if (res.ok) {
-          responseBox.className = 'response-box success';
-          responseBox.innerHTML = `
-            <strong>Status 201 Created</strong><br>
-            ${data.mensagem} (ID: #${data.chamado.id})
-          `;
-          inputTitulo.value = '';
-          inputDescricao.value = '';
-          inputTitulo.dispatchEvent(new Event('input'));
-          carregarChamados();
-        } else {
-          responseBox.className = 'response-box error';
-          responseBox.innerHTML = `
-            <strong>Status ${res.status} Bad Request</strong><br>
-            ${data.erro || 'Erro na validação do chamado'}
-          `;
-        }
-      } catch (err) {
-        responseBox.className = 'response-box error';
-        responseBox.innerHTML = `<strong>Erro:</strong> Não foi possível conectar ao servidor.`;
-      }
-    });
-
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
-    // Iniciar carregando lista
-    carregarChamados();
-  </script>
+  <!-- Container de Notificações Toast -->
+  <aside id="toastContainer" class="toast-container" aria-live="assertive"></aside>
 </body>
 </html>
