@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import path from 'path';
 import { validarTituloChamado } from './validator';
 
 export interface Chamado {
@@ -17,6 +18,9 @@ export function limparChamados(): void {
 export const app = express();
 
 app.use(express.json());
+
+// Painel visual interativo no navegador
+app.use('/dashboard', express.static(path.join(__dirname, '../public')));
 
 // Rota raiz original (compatível com os requisitos iniciais)
 app.get('/', (_req: Request, res: Response) => {
