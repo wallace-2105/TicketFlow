@@ -7,7 +7,9 @@
     "start": "ts-node src/server.ts",
     "dev": "ts-node src/server.ts",
     "build": "tsc",
-    "test": "jest --verbose"
+    "test": "jest --verbose",
+    "test:load": "python scripts/load_test.py",
+    "seed": "python scripts/seed_tickets.py"
   },
   "keywords": [],
   "author": "Claudio Sousa",
