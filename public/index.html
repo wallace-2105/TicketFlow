@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Service Desk - Painel de Chamados</title>
-  <meta name="description" content="Painel interativo de gerenciamento e validação de chamados da API Service Desk.">
+  <title>TicketFlow - Service Desk & Gestão de Incidentes</title>
+  <meta name="description" content="Sistema profissional de Service Desk com workflow completo de atendimento, testes automatizados e validações em tempo real.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -13,20 +13,38 @@
 </head>
 <body>
   <div class="app-wrapper">
-    <!-- Header Principal -->
+    <!-- Header Principal com Seletor de Papéis -->
     <header class="app-header">
       <div class="brand-section">
         <div class="brand-badge-icon" aria-hidden="true">🎫</div>
         <div class="brand-titles">
-          <h1>Service Desk API</h1>
-          <p>Painel de Controle e Validações em Tempo Real</p>
+          <h1>TicketFlow</h1>
+          <p>Service Desk & Gestão de Incidentes de TI</p>
         </div>
       </div>
-      <div class="server-pill" title="Servidor Express respondendo localmente">
-        <span class="server-dot"></span>
-        <span>API Online :3000</span>
+
+      <div class="header-right">
+        <!-- Seletor de Papel: Solicitante vs Suporte -->
+        <div class="role-selector" role="tablist" aria-label="Alternar papel no sistema">
+          <button type="button" id="roleBtnSolicitante" class="role-tab active" role="tab" aria-selected="true">
+            <span aria-hidden="true">👤</span> Solicitante
+          </button>
+          <button type="button" id="roleBtnSuporte" class="role-tab" role="tab" aria-selected="false">
+            <span aria-hidden="true">🛠️</span> Equipe de Suporte
+          </button>
+        </div>
+
+        <div class="server-pill" title="Servidor Express respondendo localmente">
+          <span class="server-dot"></span>
+          <span>API :3000</span>
+        </div>
       </div>
     </header>
+
+    <!-- Banner de Contexto Operacional -->
+    <div id="roleBanner" class="role-banner solicitante" role="status">
+      <span>👤 <strong>Visão do Solicitante:</strong> Abra novos chamados e acompanhe o andamento dos seus incidentes.</span>
+    </div>
 
     <!-- Barra de Métricas / Estatísticas -->
     <section class="stats-ribbon" aria-label="Estatísticas do Sistema">
@@ -35,6 +53,13 @@
         <div class="stat-info">
           <div id="statTotal" class="stat-value">0</div>
           <div class="stat-label">Total de Chamados</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" aria-hidden="true">🟡</div>
+        <div class="stat-info">
+          <div id="statOpen" class="stat-value" style="color: #fbbf24;">0</div>
+          <div class="stat-label">Aguardando Atendimento</div>
         </div>
       </div>
       <div class="stat-card">
@@ -54,9 +79,9 @@
     </section>
 
     <!-- Grid Principal: Formulário e Feed -->
-    <main class="dashboard-grid">
-      <!-- Coluna Esquerda: Abertura de Chamados -->
-      <section class="panel-card" aria-labelledby="formTitle">
+    <main id="dashboardGrid" class="dashboard-grid">
+      <!-- Coluna Esquerda: Abertura de Chamados (Visível para Solicitante) -->
+      <section id="formColumn" class="panel-card" aria-labelledby="formTitle">
         <div class="panel-header">
           <h2 id="formTitle">Abrir Novo Chamado</h2>
         </div>
@@ -71,7 +96,7 @@
               type="text" 
               id="inputTitulo" 
               class="input-text" 
-              placeholder="Ex: Falha na autenticação SSO" 
+              placeholder="Ex: Falha na autenticação SSO em produção" 
               autocomplete="off" 
               required
             />
@@ -109,20 +134,36 @@
         </form>
       </section>
 
-      <!-- Coluna Direita: Feed de Chamados e Pesquisa -->
+      <!-- Coluna Direita: Feed de Chamados e Painel de Atendimento -->
       <section class="panel-card" aria-labelledby="feedTitle">
         <div class="panel-header">
-          <h2 id="feedTitle">Fila de Atendimento</h2>
+          <h2 id="feedTitle">Fila de Chamados & Incidentes</h2>
         </div>
 
         <div class="feed-controls">
+          <!-- Filtros de Status (Exclusivo para Equipe de Suporte) -->
+          <div id="statusFilterTabs" class="status-filter-tabs" style="display: none;">
+            <button type="button" class="status-filter-btn active" data-status="TODOS">
+              Todos (<span id="countTodos">0</span>)
+            </button>
+            <button type="button" class="status-filter-btn" data-status="ABERTO">
+              🟡 Abertos (<span id="countAbertos">0</span>)
+            </button>
+            <button type="button" class="status-filter-btn" data-status="EM_ATENDIMENTO">
+              🔵 Em Atendimento (<span id="countEmAtendimento">0</span>)
+            </button>
+            <button type="button" class="status-filter-btn" data-status="RESOLVIDO">
+              🟢 Resolvidos (<span id="countResolvidos">0</span>)
+            </button>
+          </div>
+
           <div class="search-box-wrapper">
             <span class="search-icon" aria-hidden="true">🔍</span>
             <input 
               type="search" 
               id="searchInput" 
               class="search-input" 
-              placeholder="Pesquisar por título, ID ou conteúdo..." 
+              placeholder="Pesquisar por título, ID, técnico ou descrição..." 
               autocomplete="off"
             />
             <button type="button" id="clearSearchBtn" class="clear-search-btn" title="Limpar pesquisa">✕</button>
@@ -140,6 +181,48 @@
       <span>•</span>
       <a href="/chamados" target="_blank">GET /chamados (JSON)</a>
     </footer>
+  </div>
+
+  <!-- Modal de Resolução Técnica -->
+  <div id="resolutionModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modalHeading">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modalHeading">
+          <span>✓ Finalizar e Resolver Chamado</span>
+          <span id="modalTicketId" style="color: var(--accent-cyan); font-size: 0.95rem;">#0</span>
+        </h3>
+        <button type="button" id="btnCloseModal" class="modal-close-btn" title="Fechar">✕</button>
+      </div>
+
+      <div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.35rem;">Incidente:</p>
+        <p id="modalTicketTitle" style="font-weight: 600; font-size: 0.95rem;"></p>
+      </div>
+
+      <form id="formResolucao">
+        <div class="form-field">
+          <label for="inputTecnico" style="font-size: 0.82rem; color: var(--text-muted);">Nome do Técnico / Especialista *</label>
+          <input type="text" id="inputTecnico" class="input-text" required />
+        </div>
+
+        <div class="form-field" style="margin-top: 0.85rem;">
+          <label for="inputResolucao" style="font-size: 0.82rem; color: var(--text-muted);">Descrição da Solução Técnica Aplicada *</label>
+          <textarea 
+            id="inputResolucao" 
+            class="textarea-text" 
+            placeholder="Descreva o procedimento realizado para solucionar o incidente (ex: Reiniciado serviço e corrigido cache)..." 
+            required
+          ></textarea>
+        </div>
+
+        <div class="modal-footer" style="margin-top: 1.25rem;">
+          <button type="button" id="btnCancelModal" class="chip-btn" style="padding: 0.6rem 1rem;">Cancelar</button>
+          <button type="submit" class="btn-primary-action" style="background: linear-gradient(135deg, var(--success), #059669); padding: 0.6rem 1.25rem;">
+            <span>Concluir e Resolver Chamado</span>
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- Container de Notificações Toast -->
