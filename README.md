@@ -1,6 +1,4 @@
-
-
-# TicketFlow - Service Desk & Incident Management Platform
+# TicketFlow - Plataforma de Service Desk & Gestão de Incidentes
 
 <div align="center">
 
@@ -9,8 +7,8 @@
 ![Express](https://img.shields.io/badge/Express-5.2-000000?style=for-the-badge&logo=express&logoColor=white)
 ![Jest](https://img.shields.io/badge/Jest-30.5-C21325?style=for-the-badge&logo=jest&logoColor=white)
 ![CI/CD](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
-![Tests](https://img.shields.io/badge/Tests-29%2F29%20Passing-brightgreen?style=for-the-badge&logo=checkmarx&logoColor=white)
-![License](https://img.shields.io/badge/License-ISC-blue?style=for-the-badge)
+![Testes](https://img.shields.io/badge/Testes-29%2F29%20Aprovados-brightgreen?style=for-the-badge&logo=checkmarx&logoColor=white)
+![Licença](https://img.shields.io/badge/Licen%C3%A7a-ISC-blue?style=for-the-badge)
 
 <p align="center">
   <strong>Sistema corporativo de Service Desk e Gestão de Incidentes de TI, desenvolvido com arquitetura orientada a serviços RESTful, validações estritas de regras de negócio, interface web reativa com alternância de papéis (Solicitante vs Suporte), suíte completa de testes automatizados e esteira de CI/CD.</strong>
@@ -475,4 +473,3 @@ Para contribuir com o projeto:
 
 Este projeto está licenciado sob a licença [ISC](LICENSE).
 Desenvolvido como solução corporativa para gestão de incidentes e service desk.
-
