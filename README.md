@@ -473,4 +473,4 @@ Para contribuir com o projeto:
 
 Este projeto está licenciado sob a licença [ISC](LICENSE).
 Desenvolvido como solução corporativa para gestão de incidentes e service desk.
-o
+
